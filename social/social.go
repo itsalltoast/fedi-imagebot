@@ -1,31 +1,37 @@
+package social
 /*
  * fedi-imagebot: An imagebot for the Fediverse.
  * Copyright © 2021, Mick 🔥 Abernathy <@itsalltoast@to.ast.my>
  *   BSD-3 - See LICENSE for usage restrictions.
  */
-package social
 
 import (
 	"github.com/itsalltoast/fedi-imagebot/config"
 )
 
-type SocialInterface interface {
-	RemovePost(postId string) error
+// Interface represents a base Social network connection object.
+//
+type Interface interface {
+	RemovePost(postID string) error
 	PostImage(url string) error
 }
 
+// Social stores the user's configuration object for this social API.
+//
 type Social struct {
-	SocialInterface
+	Interface
 	config *config.Config
 }
 
-// Should we add base functionality or modularity here?  "Meh" for now
-func NewSocial(c *config.Config) SocialInterface {
+// NewSocial constructs a social network object for the user's requested
+// backend API.  Currently only supports Misskey.
+//
+func NewSocial(c *config.Config) Interface {
 	var s *Social
 	switch c.SiteType {
 	case "misskey":
 		{
-			sa := NewMisskey(c)
+			sa := newMisskey(c)
 			return sa
 		}
 	}

@@ -1,9 +1,9 @@
+package social
 /*
  * fedi-imagebot: An imagebot for the Fediverse.
  * Copyright © 2021, Mick 🔥 Abernathy <@itsalltoast@to.ast.my>
  *   BSD-3 - See LICENSE for usage restrictions.
  */
-package social
 
 import (
 	"github.com/yitsushi/go-misskey"
@@ -14,29 +14,31 @@ import (
 	"os"
 )
 
+// Misskey stores settings that are specific to using the Misskey API.
+//
 type Misskey struct {
 	client   *misskey.Client
-	siteUrl  string
+	siteURL  string
 	apiKey   string
-	folderId string
+	folderID string
 }
 
-func NewMisskey(cfg *config.Config) *Misskey {
+func newMisskey(cfg *config.Config) *Misskey {
 	m := new(Misskey)
-	m.siteUrl = cfg.SiteURL
+	m.siteURL = cfg.SiteURL
 	m.apiKey = cfg.SiteKey
-	m.folderId = cfg.MisskeyFolder
-	m.client = misskey.NewClient(m.siteUrl, m.apiKey)
+	m.folderID = cfg.MisskeyFolder
+	m.client = misskey.NewClient(m.siteURL, m.apiKey)
 
 	return m
 }
 
-func (m *Misskey) RemovePost(postId string) error {
+// RemovePost will delete the identified post and its associated file.
+//
+func (m *Misskey) RemovePost(postID string) error {
 	postToRemove := os.Args[1]
 
-	if note, err := m.client.Notes().Show(postToRemove); err != nil {
-		return err
-	} else {
+	if note, err := m.client.Notes().Show(postToRemove); err == nil {
 		var fileToRemove string
 		if len(note.FileIds) > 0 {
 			fileToRemove = note.FileIds[0]
@@ -49,26 +51,30 @@ func (m *Misskey) RemovePost(postId string) error {
 		if err = m.client.Drive().File().Delete(fileToRemove); err != nil {
 			return err
 		}
+	} else {
+		return err
 	}
 	return nil
 }
 
+// PostImage will upload the image to the user's Drive and post the image to the timeline.
+//
 func (m *Misskey) PostImage(url string) error {
 
 	//	name := RandomString(24)
 	if file, err := m.client.Drive().File().CreateFromURL(files.CreateFromURLOptions{
-		FolderID: m.folderId,
+		FolderID: m.folderID,
 		//		Name:     name,
 		URL: url,
-	}); err != nil {
-		return err
-	} else {
+	}); err == nil {
 		if _, err := m.client.Notes().Create(notes.CreateRequest{
 			Visibility: "public",
 			FileIDs:    []string{file.ID},
 		}); err != nil {
 			return err
 		}
+	} else {
+		return err
 	}
 	return nil
 }

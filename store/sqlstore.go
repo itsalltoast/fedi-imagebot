@@ -1,18 +1,22 @@
+package store
 /*
  * fedi-imagebot: An imagebot for the Fediverse.
  * Copyright © 2021, Mick 🔥 Abernathy <@itsalltoast@to.ast.my>
  *   BSD-3 - See LICENSE for usage restrictions.
  */
-package store
 
 import (
 	"database/sql"
+	// Load the SQLite3 driver as a dependency.
 	_ "github.com/mattn/go-sqlite3"
 	"log"
 	"os"
 	"strings"
 )
 
+// SQLStore is a backend that supports SQL-based databases (but currently
+// is only really useful for SQLite3 files).
+//
 type SQLStore struct {
 	Store
 
@@ -22,7 +26,10 @@ type SQLStore struct {
 	mark *sql.Stmt
 }
 
-func NewSQLStore(dbType string, connectString string) *SQLStore {
+// newSQLStore creates a storage object pointing to the requested database
+// configuration and returns it to the user.
+//
+func newSQLStore(dbType string, connectString string) *SQLStore {
 	s := new(SQLStore)
 	var e error
 	if len(connectString) < 1 {
@@ -36,6 +43,8 @@ func NewSQLStore(dbType string, connectString string) *SQLStore {
 	return s
 }
 
+// Close an established SQLStore connection.
+//
 func (s *SQLStore) Close() {
 	e := s.db.Close()
 	if e != nil {
@@ -119,6 +128,10 @@ func (s *SQLStore) getMarkStmt() *sql.Stmt {
 	return s.mark
 }
 
+// HaveURL reports whether a URL already exists in the database or not.  This function may go away,
+// since the database is expected to have a constraint that prohibits the addition of duplicate
+// URLs.
+//
 func (s *SQLStore) HaveURL(url string) bool {
 
 	// TODO: NOT IMPLEMENTED but kind of doesn't matter since there's a unique index on bot_images.url anyway.
@@ -126,11 +139,15 @@ func (s *SQLStore) HaveURL(url string) bool {
 	return false
 }
 
+// AddURL inserts a new URL into the database.
+//
 func (s *SQLStore) AddURL(url string) error {
 	_, e := s.addStmt().Exec(url)
 	return e
 }
 
+// AddURLs adds a set of new URLs into the database (using store.AddURL).
+//
 func (s *SQLStore) AddURLs(urls []string) error {
 
 	var e error
@@ -143,11 +160,18 @@ func (s *SQLStore) AddURLs(urls []string) error {
 	return nil
 }
 
+// MarkURL updates the database to indicate that a URL has been posted to
+// the bot's timeline.
+//
 func (s *SQLStore) MarkURL(url string) error {
 	_, e := s.getMarkStmt().Exec(url)
 	return e
 }
 
+// GetRandomURL returns a single random URL from the database.  If unseenOnly
+// is true, it will exclude any URLs that have already been posted
+// to the user's timeline.
+//
 func (s *SQLStore) GetRandomURL(unseenOnly bool) (string, error) {
 
 	r, e := s.getRandStmt(unseenOnly).Query()

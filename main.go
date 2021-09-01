@@ -1,9 +1,9 @@
+package main
 /*
  * fedi-imagebot: An imagebot for the Fediverse.
  * Copyright © 2021, Mick 🔥 Abernathy <@itsalltoast@to.ast.my>
  *   BSD-3 - See LICENSE for usage restrictions.
  */
-package main
 
 import (
 	"database/sql"
@@ -16,21 +16,22 @@ import (
 	"os"
 )
 
-func DiscoverURLs(cfg *config.Config) []string {
+func discoverURLs(cfg *config.Config) []string {
 	s := search.NewSearch(cfg)
-	if r, e := s.GetURLSet(cfg.Keywords); e == nil {
-		return r
+	if r, e := s.GetURLSet(cfg.Keywords); e != nil {
 
-	} else {
 		// API returned an error, we can't continue beyond this.
 		//
 		log.Fatal("Image search failed: ", e)
+
+	} else {
+		return r
 	}
 
 	return nil
 }
 
-func RunAllRequestedBots(wantToGet bool, configs []*config.Config) {
+func runAllRequestedBots(wantToGet bool, configs []*config.Config) {
 	for _, cfg := range configs {
 		db := store.NewStore(cfg)
 		defer db.Close()
@@ -38,7 +39,7 @@ func RunAllRequestedBots(wantToGet bool, configs []*config.Config) {
 		// The user specifically only wants to add URLs.  This might be something they want to do weekly?
 		//
 		if wantToGet {
-			r := DiscoverURLs(cfg)
+			r := discoverURLs(cfg)
 			e := db.AddURLs(r)
 			if e != nil {
 				log.Println("Failed adding URLs:", e)
@@ -144,5 +145,5 @@ func main() {
 		configs = append(configs, cfg)
 	}
 
-	RunAllRequestedBots(wantToGet, configs)
+	runAllRequestedBots(wantToGet, configs)
 }

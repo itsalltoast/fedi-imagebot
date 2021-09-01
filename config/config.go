@@ -1,9 +1,9 @@
+package config
 /*
  * fedi-imagebot: An imagebot for the Fediverse.
  * Copyright © 2021, Mick 🔥 Abernathy <@itsalltoast@to.ast.my>
  *   BSD-3 - See LICENSE for usage restrictions.
  */
-package config
 
 import (
 	"os"
@@ -14,6 +14,8 @@ import (
 	"path/filepath"
 )
 
+// Config controls how the imagebot behaves.
+//
 type Config struct {
 	Name            string `json:"name"`
 	SiteType        string `json:"site"`
@@ -31,10 +33,16 @@ type Config struct {
 	LowWaterMark    int    `json:"lwm"`
 }
 
-var FileNotFound error = errors.New("File not found")
-var FileIOError error = errors.New("Input/output error loading file")
-var FileParseError error = errors.New("Parse error in config file")
+// ErrFileNotFound is returned when a configuration file cannot be found.
+var ErrFileNotFound error = errors.New("File not found")
+// ErrFileIOError is returned when a configuration file is found, but could not be read.
+var ErrFileIOError error = errors.New("Input/output error loading file")
+// ErrFileParseError is returned when a configuration file is not in correct JSON format.
+var ErrFileParseError error = errors.New("Parse error in config file")
 
+// NewConfigFromEnv returns a configuration object based on the environment variables set
+// at imagebot runtime (intended for use in containers).
+//
 func NewConfigFromEnv() *Config {
 	config := new(Config)
 	config.Name = os.Getenv("BOT_NAME")
@@ -53,26 +61,32 @@ func NewConfigFromEnv() *Config {
 	return config
 }
 
+// NewConfigFromFile returns a configuration object based on a JSON file.
+//
 func NewConfigFromFile(filename string) (*Config, error) {
 
 	var config Config
-	if f, e := os.Open(filepath.Clean(filename)); e != nil {
-		return nil, FileNotFound
-	} else {
-		if data, e := ioutil.ReadAll(f); e != nil {
-			return nil, FileIOError
-		} else {
+	ioError := false
+	if f, e := os.Open(filepath.Clean(filename)); e == nil {
+		if data, e := ioutil.ReadAll(f); e == nil {
 			e = json.Unmarshal(data, &config)
 			if e != nil {
-				return nil, FileParseError
+				return nil, ErrFileParseError
 			}
 
 			return &config, nil
+
+		} else {
+			return nil, FileIOError
 		}
 	}
-	return nil, errors.New("Unexpected error")
+
+	return nil, ErrFileNotFound
 }
 
+// Valid performs validation of a config object (and in minimal cases, inserts defaults
+// where appropriate).  Returns false on invalid configuration.
+//
 func (c *Config) Valid() bool {
 
 	// DATABASE: By default, we will use a SQLite3 database in the user's home directory.
