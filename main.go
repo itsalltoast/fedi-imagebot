@@ -23,7 +23,7 @@ func discoverURLs(cfg *config.Config) []string {
 	if r, e := s.GetURLSet(cfg.Keywords); e != nil {
 		// API returned an error, we can't continue beyond this.
 		//
-		log.Fatal("Image search failed: ", e)
+		log.Fatalln("Image search failed: ", e)
 	} else {
 		return r
 	}
@@ -44,6 +44,7 @@ func runAllRequestedBots(wantToGet bool, configs []*config.Config) {
 			if e != nil {
 				log.Println("Failed adding URLs:", e)
 			}
+
 			continue
 		}
 
@@ -53,9 +54,10 @@ func runAllRequestedBots(wantToGet bool, configs []*config.Config) {
 		//
 		if e != nil && errors.Is(e, sql.ErrNoRows) {
 			r := discoverURLs(cfg)
-			e := db.AddURLs(r)
+			e = db.AddURLs(r)
 			if e != nil {
 				log.Println(cfg.Name, e)
+
 				continue
 			}
 
@@ -65,13 +67,14 @@ func runAllRequestedBots(wantToGet bool, configs []*config.Config) {
 
 		// Note that this catches both possible errors above.
 		if e != nil {
-			log.Fatal(e)
+			log.Fatalln(e)
 		}
 
 		mc := social.NewSocial(cfg)
 
 		if e = mc.PostImage(url); e != nil {
 			log.Println(cfg.Name, "Misskey API call failed: ", e)
+
 			continue
 		}
 		// DEBUG: log.Println(">>", url)
@@ -80,9 +83,50 @@ func runAllRequestedBots(wantToGet bool, configs []*config.Config) {
 		//
 		if e = db.MarkURL(url); e != nil {
 			log.Println(cfg.Name, "Unable to mark URL as seen in the database:", e)
+
 			continue
 		}
 	}
+}
+
+func handleArg(i int, arg string, wantToGet *bool) *config.Config {
+	// First argument is the command we're running.  Not interested.
+	//
+	if i < 1 {
+		return nil
+
+		// The user wants us to find more content.
+		//
+	} else if arg == "get" {
+		*wantToGet = true
+
+		return nil
+	}
+
+	// Load the requested JSON file.
+	//
+	configFile, err := config.NewConfigFromFile(os.Args[1])
+	if err != nil {
+		log.Println("Failed loading configuration file:", arg)
+		log.Println("Error:", err)
+
+		return nil
+	} else if !configFile.Valid() {
+		log.Println("Failed loading configuration file:", arg)
+		log.Println("Ensure all required parameters are set.")
+
+		return nil
+	}
+
+	// If the JSON file hasn't named the bot, name the bot after the JSON file.
+	//
+	if len(configFile.Name) < 1 {
+		configFile.Name = arg
+	}
+
+	// Add to the list of things to do.
+	//
+	return configFile
 }
 
 func main() {
@@ -93,44 +137,12 @@ func main() {
 
 	// The only other arguments that can be passed in are JSON configuration files.
 	//
-	var configs []*config.Config
+	configs := make([]*config.Config, 0)
 	for i, arg := range os.Args {
-
-		// First argument is the command we're running.  Not interested.
-		//
-		if i < 1 {
-			continue
-
-			// The user wants us to find more content.
-			//
-		} else if arg == "get" {
-			wantToGet = true
-			continue
+		configFile := handleArg(i, arg, &wantToGet)
+		if configFile != nil {
+			configs = append(configs, configFile)
 		}
-
-		// Load the requested JSON file.
-		//
-		configFile, err := config.NewConfigFromFile(os.Args[1])
-		if err != nil {
-			log.Println("Failed loading configuration file:", arg)
-			log.Println("Error:", err)
-			continue
-
-		} else if !configFile.Valid() {
-			log.Println("Failed loading configuration file:", arg)
-			log.Println("Ensure all required parameters are set.")
-			continue
-		}
-
-		// If the JSON file hasn't named the bot, name the bot after the JSON file.
-		//
-		if len(configFile.Name) < 1 {
-			configFile.Name = arg
-		}
-
-		// Add to the list of things to do.
-		//
-		configs = append(configs, configFile)
 	}
 
 	// If no arguments were passed in, we will try to load our configuration
