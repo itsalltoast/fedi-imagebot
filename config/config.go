@@ -67,15 +67,18 @@ func NewConfigFromFile(filename string) (*Config, error) {
 
 	var config Config
 	if f, e := os.Open(filepath.Clean(filename)); e == nil {
-		if data, e := ioutil.ReadAll(f); e == nil {
+		var data []byte
+		var e error
+		if data, e = ioutil.ReadAll(f); e == nil {
 			e = json.Unmarshal(data, &config)
 			if e != nil {
 				return nil, ErrFileParseError
 			}
 
 			return &config, nil
+		}
 
-		} else {
+		if e != nil {
 			return nil, ErrFileIOError
 		}
 	}
