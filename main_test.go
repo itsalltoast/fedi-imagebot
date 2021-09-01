@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/itsalltoast/fedi-imagebot/config"
 	"os"
 	"testing"
+
+	"github.com/itsalltoast/fedi-imagebot/config"
 )
 
 func TestValidEnv(t *testing.T) {

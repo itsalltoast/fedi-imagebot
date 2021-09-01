@@ -9,22 +9,21 @@ package main
 import (
 	"database/sql"
 	"errors"
+	"log"
+	"os"
+
 	"github.com/itsalltoast/fedi-imagebot/config"
 	"github.com/itsalltoast/fedi-imagebot/search"
 	"github.com/itsalltoast/fedi-imagebot/social"
 	"github.com/itsalltoast/fedi-imagebot/store"
-	"log"
-	"os"
 )
 
 func discoverURLs(cfg *config.Config) []string {
 	s := search.NewSearch(cfg)
 	if r, e := s.GetURLSet(cfg.Keywords); e != nil {
-
 		// API returned an error, we can't continue beyond this.
 		//
 		log.Fatal("Image search failed: ", e)
-
 	} else {
 		return r
 	}
@@ -87,7 +86,6 @@ func runAllRequestedBots(wantToGet bool, configs []*config.Config) {
 }
 
 func main() {
-
 	// Command line argument "get" instructs the bot to hit the search engine.  It will not do so
 	// (by default) otherwise.
 	//

@@ -67,7 +67,6 @@ func NewConfigFromEnv() *Config {
 // NewConfigFromFile returns a configuration object based on a JSON file.
 //
 func NewConfigFromFile(filename string) (*Config, error) {
-
 	var config Config
 	if f, e := os.Open(filepath.Clean(filename)); e == nil {
 		var data []byte
@@ -93,7 +92,6 @@ func NewConfigFromFile(filename string) (*Config, error) {
 // where appropriate).  Returns false on invalid configuration.
 //
 func (c *Config) Valid() bool {
-
 	// DATABASE: By default, we will use a SQLite3 database in the user's home directory.
 	//
 	if len(c.DBType) < 1 {

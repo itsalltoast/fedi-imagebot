@@ -8,6 +8,7 @@ package social
 
 import (
 	"errors"
+
 	"github.com/itsalltoast/fedi-imagebot/config"
 	"github.com/mattn/go-mastodon"
 )

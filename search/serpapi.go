@@ -7,12 +7,12 @@ package search
  */
 
 import (
-	g "github.com/serpapi/google-search-results-golang"
-
 	"crypto/rand"
 	"errors"
 	"log"
 	"math/big"
+
+	g "github.com/serpapi/google-search-results-golang"
 
 	"github.com/itsalltoast/fedi-imagebot/config"
 )

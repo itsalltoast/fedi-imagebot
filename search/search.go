@@ -8,6 +8,7 @@ package search
 
 import (
 	"errors"
+
 	"github.com/itsalltoast/fedi-imagebot/config"
 )
 

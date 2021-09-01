@@ -7,12 +7,13 @@ package social
  */
 
 import (
+	"os"
+
 	"github.com/yitsushi/go-misskey"
 	//"github.com/yitsushi/go-misskey/services/drive"
 	"github.com/itsalltoast/fedi-imagebot/config"
 	"github.com/yitsushi/go-misskey/services/drive/files"
 	"github.com/yitsushi/go-misskey/services/notes"
-	"os"
 )
 
 // Misskey stores settings that are specific to using the Misskey API.
@@ -61,7 +62,6 @@ func (m *Misskey) RemovePost(postID string) error {
 // PostImage will upload the image to the user's Drive and post the image to the timeline.
 //
 func (m *Misskey) PostImage(url string) error {
-
 	//	name := RandomString(24)
 	if file, err := m.client.Drive().File().CreateFromURL(files.CreateFromURLOptions{
 		FolderID: m.folderID,

@@ -8,11 +8,12 @@ package store
 
 import (
 	"database/sql"
-	// Load the SQLite3 driver as a dependency.
-	_ "github.com/mattn/go-sqlite3"
 	"log"
 	"os"
 	"strings"
+
+	// Load the SQLite3 driver as a dependency.
+	_ "github.com/mattn/go-sqlite3"
 )
 
 // SQLStore is a backend that supports SQL-based databases (but currently
@@ -110,7 +111,6 @@ func (s *SQLStore) getRandStmt(unseenOnly bool) *sql.Stmt {
 		//
 		s.rand = s.prepare(`select url from bot_images where posted is null order by random() limit 1`)
 	} else {
-
 		// TODO: We want to hint at some kind of time-preference to ensure we
 		// are posting older images before repeating recent ones.
 		//
@@ -134,7 +134,6 @@ func (s *SQLStore) getMarkStmt() *sql.Stmt {
 // URLs.
 //
 func (s *SQLStore) HaveURL(url string) bool {
-
 	// TODO: NOT IMPLEMENTED but kind of doesn't matter since there's a unique index on bot_images.url anyway.
 	//
 	return false
@@ -150,7 +149,6 @@ func (s *SQLStore) AddURL(url string) error {
 // AddURLs adds a set of new URLs into the database (using store.AddURL).
 //
 func (s *SQLStore) AddURLs(urls []string) error {
-
 	var e error
 	for _, url := range urls {
 		if e = s.AddURL(url); e != nil {
@@ -174,7 +172,6 @@ func (s *SQLStore) MarkURL(url string) error {
 // to the user's timeline.
 //
 func (s *SQLStore) GetRandomURL(unseenOnly bool) (string, error) {
-
 	r, e := s.getRandStmt(unseenOnly).Query()
 	if e != nil {
 		return "", e
