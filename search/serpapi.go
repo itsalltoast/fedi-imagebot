@@ -1,4 +1,5 @@
 package search
+
 /*
  * fedi-imagebot: An imagebot for the Fediverse.
  * Copyright © 2021, Mick 🔥 Abernathy <@itsalltoast@to.ast.my>
@@ -10,8 +11,8 @@ import (
 
 	"crypto/rand"
 	"errors"
-	"math/big"
 	"log"
+	"math/big"
 
 	"github.com/itsalltoast/fedi-imagebot/config"
 )

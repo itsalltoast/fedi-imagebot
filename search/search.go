@@ -1,4 +1,5 @@
 package search
+
 /*
  * fedi-imagebot: An imagebot for the Fediverse.
  * Copyright © 2021, Mick 🔥 Abernathy <@itsalltoast@to.ast.my>
@@ -10,7 +11,7 @@ import (
 	"github.com/itsalltoast/fedi-imagebot/config"
 )
 
-// Interface provides a common set of functions useful 
+// Interface provides a common set of functions useful
 // with various search engines.
 //
 type Interface interface {

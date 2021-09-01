@@ -1,4 +1,5 @@
 package config
+
 /*
  * fedi-imagebot: An imagebot for the Fediverse.
  * Copyright © 2021, Mick 🔥 Abernathy <@itsalltoast@to.ast.my>
@@ -6,12 +7,12 @@ package config
  */
 
 import (
-	"os"
-	"strconv"
-	"io/ioutil"
 	"encoding/json"
 	"errors"
+	"io/ioutil"
+	"os"
 	"path/filepath"
+	"strconv"
 )
 
 // Config controls how the imagebot behaves.
@@ -35,8 +36,10 @@ type Config struct {
 
 // ErrFileNotFound is returned when a configuration file cannot be found.
 var ErrFileNotFound error = errors.New("File not found")
+
 // ErrFileIOError is returned when a configuration file is found, but could not be read.
 var ErrFileIOError error = errors.New("Input/output error loading file")
+
 // ErrFileParseError is returned when a configuration file is not in correct JSON format.
 var ErrFileParseError error = errors.New("Parse error in config file")
 
@@ -47,7 +50,7 @@ func NewConfigFromEnv() *Config {
 	config := new(Config)
 	config.Name = os.Getenv("BOT_NAME")
 	config.SiteType = os.Getenv("SITE_TYPE") // "misskey" / "mastodon" / "pleroma"
-	config.SiteURL = os.Getenv("SITE_URL") // "https://xxxxx/"
+	config.SiteURL = os.Getenv("SITE_URL")   // "https://xxxxx/"
 	config.SiteKey = os.Getenv("SITE_KEY")
 	config.SiteSecret = os.Getenv("SITE_SECRET")
 	config.DBType = os.Getenv("DB_TYPE")
