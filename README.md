@@ -56,7 +56,11 @@ Runtime data for the bot (discovered images, post timestamps) is currently store
 4. Enjoy the content!
 
 ```
-$ docker run -it --rm -e SEARCH_KEY="xxxx" -e BOT_KEYWORDS="lain" -e SITE_URL="https://me.social" -e SITE_KEY="xxxx" itsalltoast/fedi-imagebot
+$ docker run -it --rm --name mynicebot \
+   -e SEARCH_KEY="xxxx" -e BOT_KEYWORDS="lain" \
+   -e SITE_URL="https://me.social" \
+   -e SITE_KEY="xxxx" \
+      itsalltoast/fedi-imagebot
 ```
 
 # Limitations:
@@ -67,12 +71,21 @@ Only supports Misskey and SerpAPI at present.
 I'm working on making this better:
 
 :white_check_mark: Configuration via json file and/or commandline parameters, instead of environment variables.
+
 :white_check_mark: Support for multiple bot "personalities" (user account/keyword combinations).
+
 :x: Support for other search APIs beyond SerpAPI.
+
 :x: Support for other database backends beyond sqlite3 (Planned: mysql, postgresql, mongodb).
+
 :x: Support for Mastodon (in progress).
+
 :x: Support for Pleroma (requires a go-pleroma library, which I'll hopefully start soon).
+
 :x: The ability to provide strings for the bot to include with the image as the post text.
+
 :x: KNOWN ISSUE: If the bot runs across an image that is hotlink-protected, it will faithfully upload the html as an image and try to post it.  Need to add a HTTP HEAD call to the image ahead of time to ensure it is the expected mime-type.
+
 :x: Run scheduling internally via a timer, to allow us to run this inside a standalone container
+
 :x: Lambda support (why not?)
