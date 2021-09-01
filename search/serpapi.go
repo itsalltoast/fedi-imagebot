@@ -11,6 +11,7 @@ import (
 	"crypto/rand"
 	"errors"
 	"math/big"
+	"log"
 
 	"github.com/itsalltoast/fedi-imagebot/config"
 )
@@ -82,7 +83,9 @@ func (s *SerpAPI) GetURLSet(keywords string) ([]string, error) {
 // GetRandomURL returns a single, random URL from a set of search results.
 //
 func (s *SerpAPI) GetRandomURL(keywords string) (string, error) {
-	if res, err := s.GetURLSet(keywords); err == nil {
+	var res []string
+	var err error
+	if res, err = s.GetURLSet(keywords); err == nil {
 		var sel *big.Int
 		sel, err = rand.Int(rand.Reader, big.NewInt(int64(len(res))))
 		if err != nil {

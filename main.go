@@ -52,7 +52,7 @@ func runAllRequestedBots(wantToGet bool, configs []*config.Config) {
 		// If we got this, we have no random URLs to select from.  Try and add some.
 		//
 		if e != nil && errors.Is(e, sql.ErrNoRows) {
-			r := DiscoverURLs(cfg)
+			r := discoverURLs(cfg)
 			e := db.AddURLs(r)
 			if e != nil {
 				log.Println(cfg.Name, e)

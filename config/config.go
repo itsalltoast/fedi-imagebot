@@ -66,7 +66,6 @@ func NewConfigFromEnv() *Config {
 func NewConfigFromFile(filename string) (*Config, error) {
 
 	var config Config
-	ioError := false
 	if f, e := os.Open(filepath.Clean(filename)); e == nil {
 		if data, e := ioutil.ReadAll(f); e == nil {
 			e = json.Unmarshal(data, &config)
@@ -77,7 +76,7 @@ func NewConfigFromFile(filename string) (*Config, error) {
 			return &config, nil
 
 		} else {
-			return nil, FileIOError
+			return nil, ErrFileIOError
 		}
 	}
 
