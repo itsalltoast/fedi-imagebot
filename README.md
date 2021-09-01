@@ -15,7 +15,7 @@ go build
 
 # Configuration:
 
-The app is currently reading all of its configuration from environment variables.  I'll be working on adding JSON config file and/or commandline support.
+The app can read its configuration from a JSON file, or from environment variables.  Specifying multiple JSON files on the commandline allows you to operate multiple bots from a single process.
 
 | Environment Variable | Use |
 |----------------------|-----|
@@ -31,6 +31,7 @@ The app is currently reading all of its configuration from environment variables
 | DB_CONNECT | Connect string for the database instance |
 | ASPECT_RATIO | (optional) 1=Landscape only, 2=Portrait only, 3=Square only.  0 or Unset = all images)
 
+See `example.json` for the expected JSON syntax.
 
 # Data Storage:
 
