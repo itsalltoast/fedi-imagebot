@@ -1,0 +1,12 @@
+{
+	"name": "example bot",
+	"site": "misskey",
+	"siteurl": "https://misskey.sample.site",
+	"sitekey": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+	"db": "sqlite3",
+	"dbconnect": "${HOME}/.example.db",
+	"search": "serpapi",
+	"searchapi": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+	"keywords": "generic sample robot",
+	"aspect": 1
+}

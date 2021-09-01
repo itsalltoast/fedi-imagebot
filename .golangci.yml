@@ -1,0 +1,75 @@
+run:
+  timeout: 5m
+  issues-exit-code: 1
+  tests: true
+  modules-download-mode: readonly
+
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - gocyclo
+        - errcheck
+        - dupl
+        - gosec
+
+linters:
+  disable-all: true
+  enable:
+    - deadcode
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - structcheck
+    - typecheck
+    - unused
+    - varcheck
+    - bodyclose
+    - depguard
+    - dogsled
+    - dupl
+    - exhaustive
+    - exportloopref
+    - funlen
+    - gci
+    - gochecknoglobals
+    - gochecknoinits
+    - gocognit
+    - goconst
+    - gocritic
+    - gocyclo
+    - godot
+    - godox
+    - goerr113
+    - gofmt
+    - gofumpt
+    - goheader
+    - goimports
+    # - golint # Replaced by revive.
+    - revive
+    - gomnd
+    - gomodguard
+    - goprintffuncname
+    - gosec
+    # - interfacer # The repository of the linter has been archived by the owner.
+    - lll
+    # - maligned # Replaced by govet 'fieldalignment'.
+    - misspell
+    - nakedret
+    - nestif
+    - nlreturn
+    - noctx
+    - nolintlint
+    - prealloc
+    - rowserrcheck
+    # - scopelint  # Replaced by exportloopref.
+    - exportloopref
+    - sqlclosecheck
+    - stylecheck
+    - testpackage
+    - unconvert
+    - unparam
+    - whitespace
+    - wsl
