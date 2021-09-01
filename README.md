@@ -38,14 +38,25 @@ Runtime data for the bot (discovered images, post timestamps) is currently store
 
 # Deployment:
 
-Cron is currently the best way to run this:
+## Run via Cron
+1. Create a json file containing your configuration, such as `${HOME}/.MyNiceRobot.json`.
+2. Run `crontab -e`
+3. Make your robot run hourly:
 
 ```
-$ crontab -e 
-...
-0 * * * * SERPAPI_KEY="xxxx" BOT_KEYWORDS="lain" MISSKEY_URL="https://me.social" MISSKEY_API_KEY="xxxx" /path/to/go-misskey-imagebot
-...
-(save and exit)
+0 * * * * ~/.bin/fedi-imagebot ~/.MyNiceRobot.json
+```
+
+4. Enjoy the content!
+
+## Run via Docker
+1. _I need to build a container image for this... Soon!_ :)
+2. Use `-e` to configure the container instance for your robot.
+?. _I need to add support for internal post scheduling (instead of external scheduling via cron)._
+4. Enjoy the content!
+
+```
+$ docker run -it --rm -e SEARCH_KEY="xxxx" -e BOT_KEYWORDS="lain" -e SITE_URL="https://me.social" -e SITE_KEY="xxxx" itsalltoast/fedi-imagebot
 ```
 
 # Limitations:
@@ -63,3 +74,5 @@ I'm working on making this better:
 :x: Support for Pleroma (requires a go-pleroma library, which I'll hopefully start soon).
 :x: The ability to provide strings for the bot to include with the image as the post text.
 :x: KNOWN ISSUE: If the bot runs across an image that is hotlink-protected, it will faithfully upload the html as an image and try to post it.  Need to add a HTTP HEAD call to the image ahead of time to ensure it is the expected mime-type.
+:x: Run scheduling internally via a timer, to allow us to run this inside a standalone container
+:x: Lambda support (why not?)
